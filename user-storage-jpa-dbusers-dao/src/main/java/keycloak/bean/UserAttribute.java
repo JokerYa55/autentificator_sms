@@ -41,8 +41,7 @@ public class UserAttribute implements Serializable {
 
     @Id
     @Column(name = "id", unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "t_user_attribute_id_seq")
-    @SequenceGenerator(name = "t_user_attribute_id_seq", sequenceName = "t_user_attribute_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "name", unique = false, nullable = false)
     private String name;

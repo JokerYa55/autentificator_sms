@@ -14,7 +14,6 @@ import javax.persistence.Index;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import org.jboss.logging.Logger;
@@ -47,8 +46,7 @@ public class UserEntity implements Serializable {
 
     @Id
     @Column(name = "id", unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "t_users_id_seq")
-    @SequenceGenerator(name = "t_users_id_seq", sequenceName = "t_users_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     // login
     @Column(name = "username", unique = true, nullable = false)
@@ -67,7 +65,7 @@ public class UserEntity implements Serializable {
     private String email;
     // Пароль
     @Column(name = "password", nullable = true)
-    private String password; 
+    private String password;
     // телефон
     @Column(name = "phone", nullable = true, length = 12)
     private String phone;
@@ -404,7 +402,5 @@ public class UserEntity implements Serializable {
     public void settUsersSmsMessagesCollection(Collection<UsersSmsMessages> tUsersSmsMessagesCollection) {
         this.tUsersSmsMessagesCollection = tUsersSmsMessagesCollection;
     }
-
-    
 
 }
