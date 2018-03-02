@@ -8,22 +8,39 @@
     </parent>
     <artifactId>user-storage-jpa-dbusers-elk</artifactId>
     <packaging>jar</packaging>
+    
+    <properties>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <version.keycloak>3.1.0.Final</version.keycloak>
+        <version.jboss-logging>3.3.1.Final</version.jboss-logging>
+        <version.hibernate-jpa-api>1.0.0.Draft-16</version.hibernate-jpa-api>
+        <module.appname>user-storage-jpa-dbusers-elk</module.appname>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-server-spi</artifactId>
-            <version>3.1.0.Final</version>
-            <type>jar</type>
+            <artifactId>keycloak-core</artifactId>
+            <scope>provided</scope>
+            <version>${version.keycloak}</version>
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-common</artifactId>
-            <version>3.1.0.Final</version>
-            <type>jar</type>
+            <artifactId>keycloak-server-spi</artifactId>
+            <scope>provided</scope>
+            <version>${version.keycloak}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <scope>provided</scope>
+            <version>${version.jboss-logging}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.1-api</artifactId>
+            <scope>provided</scope>
             <version>${version.hibernate-jpa-api}</version>
         </dependency>
         <dependency>
@@ -33,30 +50,152 @@
             <version>5.2.10.Final</version>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <groupId>org.jboss.spec.javax.ejb</groupId>
+            <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+            <version>1.0.0.Final</version>
+            <scope>provided</scope>
+        </dependency>     
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.json-simple</groupId>
+            <artifactId>json-simple</artifactId>
+            <version>1.1.1</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>sso_b2b</groupId>
-            <artifactId>user-storage-jpa-dbusers-dao</artifactId>
-            <version>1</version>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.5.2</version>
+            <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>sso_b2b</groupId>
-            <artifactId>user-storage-jpa-dbusers-util</artifactId>
-            <version>1</version>
-        </dependency>        
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>7.0</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
-    <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <version.keycloak>3.1.0.Final</version.keycloak>
-        <version.jboss-logging>3.3.1.Final</version.jboss-logging>
-        <version.hibernate-jpa-api>1.0.2.Final</version.hibernate-jpa-api>
-    </properties>
+
     <build>
-        <finalName>user-storage-jpa-dbusers-elk</finalName>
+        <finalName>${module.appname}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.1</version>
+                <configuration>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>1.1.0.Final</version>
+                <configuration>
+                    <skip>false</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <configuration>
+                    
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.3.1</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>keycloak.storage.user.EjbExampleUserStorageProviderFactory</mainClass>
+                            <packageName>keycloak.storage.user</packageName>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeScope>compile</includeScope>
+                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
+    <profiles>
+        <!-- this profile deploys an XA H2 datasource connection.  It is in-memory only, so rebooting the server will lose
+        your changes.  Run type: mvn -Padd-datasource install.  THis can only be run once.  If you run it again
+        you'll get an error that the datasource already exists -->
+        <profile>
+            <id>add-datasource</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                            <force>true</force>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>add-datasource</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>add-resource</goal>
+                                </goals>
+                                <configuration>
+                                    <force/>
+                                    <address>subsystem=datasources</address>
+                                    <resources>
+                                        <resource>
+                                            <address>xa-data-source=java:jboss/datasources/ExampleXADS</address>
+                                            <properties>
+                                                <jndi-name>java:jboss/datasources/ExampleXADS</jndi-name>
+                                                <enabled>true</enabled>
+                                                <driver-name>h2</driver-name>
+                                            </properties>
+                                            <resources>
+                                                <resource>
+                                                    <address>
+                                                        xa-datasource-properties=URL
+                                                    </address>
+                                                    <properties>
+                                                        <value>jdbc:h2:mem:test</value>
+                                                    </properties>
+                                                </resource>
+                                            </resources>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+    
 </project>
