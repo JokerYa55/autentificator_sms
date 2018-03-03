@@ -27,6 +27,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,8 +61,8 @@ public class EjbExampleUserStorageProvider implements UserStorageProvider,
 
     @PersistenceContext
     protected EntityManager em;
-    protected ComponentModel model;
-    protected KeycloakSession session;
+    private ComponentModel model;
+    private KeycloakSession session;
 
     @Override
     public void close() {
@@ -73,9 +74,39 @@ public class EjbExampleUserStorageProvider implements UserStorageProvider,
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     *
+     * @param username
+     * @param realm
+     * @return
+     */
     @Override
-    public UserModel getUserByUsername(String string, RealmModel rm) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public UserModel getUserByUsername(String username, RealmModel realm) {
+        log.info(String.format("getUserByUsername => \n\tusername = %s\n\trealm = %s", username, realm));
+        UserModel result = null;
+        try {
+            TypedQuery<UserEntity> query = null;
+            if (!username.contains("+7")) {
+                log.debug("FIND BY USERNAME");
+                query = em.createNamedQuery("getUserByUsername", UserEntity.class);
+                query.setParameter("username", username);
+            } else {
+                log.debug("FIND BY PHONE => " + username.substring(2));
+                query = em.createNamedQuery("getUserByPhone", UserEntity.class);
+                query.setParameter("phone", username.substring(1));
+            }
+
+            List<UserEntity> resultList = query.getResultList();
+            if (resultList.isEmpty()) {
+                log.info("could not find username: " + username);
+                return null;
+            } else {
+                result = new DAO.UserAdapter(session, realm, model, resultList.get(0), em);
+            }
+        } catch (Exception e) {
+            log.log(Logger.Level.ERROR, e);
+        }
+        return result;
     }
 
     @Override
@@ -84,8 +115,21 @@ public class EjbExampleUserStorageProvider implements UserStorageProvider,
     }
 
     @Override
-    public UserModel addUser(RealmModel rm, String string) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public UserModel addUser(RealmModel realm, String username) {
+        log.info(String.format("addUser => \n\trealm = %s\n\tusername = %s", realm, username));
+        UserModel result = null;
+        try {
+            UserEntity entity = new UserEntity();            
+            entity.setUsername(username);
+            entity.setUser_status(0);
+            entity.setCreate_date(new Date());
+            em.persist(entity);
+            UserAdapter user = new UserAdapter(session, realm, model, entity, em);
+            result = user;
+        } catch (Exception e) {
+            log.log(Logger.Level.ERROR, e);
+        }
+        return result;
     }
 
     @Override
@@ -406,6 +450,22 @@ public class EjbExampleUserStorageProvider implements UserStorageProvider,
     @Override
     public CredentialModel getStoredCredentialByNameAndType(RealmModel rm, String string, String string1, String string2) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public ComponentModel getModel() {
+        return model;
+    }
+
+    public void setModel(ComponentModel model) {
+        this.model = model;
+    }
+
+    public KeycloakSession getSession() {
+        return session;
+    }
+
+    public void setSession(KeycloakSession session) {
+        this.session = session;
     }
 
 }

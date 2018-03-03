@@ -22,8 +22,8 @@ public class EjbExampleUserStorageProviderFactory implements UserStorageProvider
             InitialContext ctx = new InitialContext();
             EjbExampleUserStorageProvider provider = (EjbExampleUserStorageProvider)ctx.lookup("java:global/user-storage-jpa-dbuser-elk/" + EjbExampleUserStorageProvider.class.getSimpleName());
             log.debug("provider = " + provider + "  -> " + EjbExampleUserStorageProvider.class.getSimpleName());
-//            provider.setModel(model);
-//            provider.setSession(session);
+            provider.setModel(model);
+            provider.setSession(session);
             return provider;
         } catch (Exception e) {
             log.error("Ошибка! " + e.getMessage());
