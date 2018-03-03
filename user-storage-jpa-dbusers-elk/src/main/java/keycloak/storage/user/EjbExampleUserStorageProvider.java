@@ -66,12 +66,34 @@ public class EjbExampleUserStorageProvider implements UserStorageProvider,
 
     @Override
     public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        log.debug("close");
     }
 
+    /**
+     *
+     * @param id
+     * @param realm
+     * @return
+     */
     @Override
-    public UserModel getUserById(String string, RealmModel rm) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public UserModel getUserById(String id, RealmModel realm) {
+        log.info(String.format("getUserById => \n\tid = %s\n\trealm = %s", id, realm));
+        UserModel result = null;
+        try {
+            Long persistenceId = new Long(StorageId.externalId(id));
+            log.debug("persistenceId => " + persistenceId);
+            UserEntity entity = em.find(UserEntity.class, persistenceId);
+            if (entity == null) {
+                log.info("could not find user by id: " + id);
+                result = null;
+            } else {
+                log.debug("ID => " + entity.getId().toString());
+                result = new UserAdapter(session, realm, model, entity, em);
+            }
+        } catch (Exception e) {
+            log.log(Logger.Level.ERROR, e);
+        }
+        return result;
     }
 
     /**
@@ -119,7 +141,7 @@ public class EjbExampleUserStorageProvider implements UserStorageProvider,
         log.info(String.format("addUser => \n\trealm = %s\n\tusername = %s", realm, username));
         UserModel result = null;
         try {
-            UserEntity entity = new UserEntity();            
+            UserEntity entity = new UserEntity();
             entity.setUsername(username);
             entity.setUser_status(0);
             entity.setCreate_date(new Date());
