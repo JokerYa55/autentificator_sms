@@ -35,7 +35,6 @@ import java.util.Set;
 import java.util.UUID;
 import keycloak.bean.UserEntity;
 import org.keycloak.common.util.MultivaluedHashMap;
-import static keycloak.storage.HTTPUtil.Util.doGet;
 import org.keycloak.models.ClientModel;
 import org.keycloak.models.FederatedIdentityModel;
 import org.keycloak.models.ProtocolMapperModel;
@@ -107,18 +106,24 @@ public class EjbExampleUserStorageProvider implements UserStorageProvider,
 
     @Override
     public List<UserModel> getUsers(RealmModel realm, int firstResult, int maxResults) {
-        log.info(String.format("getUsers_1\n\n\trealm = %s\n\tfirstResult = #s\n\tmaxResults = %s", realm.getName(), firstResult, maxResults));
-        TypedQuery<UserEntity> query = em.createNamedQuery("getAllUsers", UserEntity.class);
-        if (firstResult != -1) {
-            query.setFirstResult(firstResult);
-        }
-        if (maxResults != -1) {
-            query.setMaxResults(maxResults);
-        }
-        List<UserEntity> results = query.getResultList();
-        List<UserModel> users = new LinkedList<>();
-        for (UserEntity entity : results) {
-            users.add(new UserAdapter(session, realm, model, entity, em));
+        log.info(String.format("getUsers_1\n\n\trealm = %s\n\tfirstResult = #s\n\tmaxResults = %s\n\tem=%s", realm.getName(), firstResult, maxResults, em));
+        List<UserModel> users = null;
+        try {
+            TypedQuery<UserEntity> query = em.createNamedQuery("getAllUsers", UserEntity.class);
+            if (firstResult != -1) {
+                query.setFirstResult(firstResult);
+            }
+            if (maxResults != -1) {
+                query.setMaxResults(maxResults);
+            }
+            List<UserEntity> results = query.getResultList();
+            users = new LinkedList<>();
+            for (UserEntity entity : results) {
+                users.add(new UserAdapter(session, realm, model, entity, em));
+            }
+
+        } catch (Exception e) {
+            log.log(Logger.Level.ERROR, e);
         }
         return users;
     }
@@ -403,5 +408,4 @@ public class EjbExampleUserStorageProvider implements UserStorageProvider,
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-  
 }
