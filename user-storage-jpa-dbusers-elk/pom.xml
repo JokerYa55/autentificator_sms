@@ -15,9 +15,9 @@
         <version.keycloak>3.1.0.Final</version.keycloak>
         <version.jboss-logging>3.3.1.Final</version.jboss-logging>
         <version.hibernate-jpa-api>1.0.0.Draft-16</version.hibernate-jpa-api>
-        <module.appname>user-storage-jpa-dbusers-elk</module.appname>
+        <module.appname>user-storage-jpa-dbuser-elk</module.appname>        
     </properties>
-
+    
     <dependencies>
         <dependency>
             <groupId>org.keycloak</groupId>
@@ -73,13 +73,12 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>javax</groupId>
-            <artifactId>javaee-web-api</artifactId>
-            <version>7.0</version>
-            <type>jar</type>
+            <groupId>sso_b2b</groupId>
+            <artifactId>user-storage-jpa-dbusers-dao</artifactId>
+            <version>1</version>
         </dependency>
     </dependencies>
-
+    
     <build>
         <finalName>${module.appname}</finalName>
         <plugins>
@@ -116,8 +115,8 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>keycloak.storage.user.EjbExampleUserStorageProviderFactory</mainClass>
-                            <packageName>keycloak.storage.user</packageName>
+                            <mainClass>com.wordpress.dev64.test.MainClass</mainClass>
+                            <packageName>com.wordpress.dev64.test</packageName>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
@@ -144,58 +143,5 @@
             </plugin>
         </plugins>
     </build>
-    <profiles>
-        <!-- this profile deploys an XA H2 datasource connection.  It is in-memory only, so rebooting the server will lose
-        your changes.  Run type: mvn -Padd-datasource install.  THis can only be run once.  If you run it again
-        you'll get an error that the datasource already exists -->
-        <profile>
-            <id>add-datasource</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        <configuration>
-                            <skip>false</skip>
-                            <force>true</force>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>add-datasource</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>add-resource</goal>
-                                </goals>
-                                <configuration>
-                                    <force/>
-                                    <address>subsystem=datasources</address>
-                                    <resources>
-                                        <resource>
-                                            <address>xa-data-source=java:jboss/datasources/ExampleXADS</address>
-                                            <properties>
-                                                <jndi-name>java:jboss/datasources/ExampleXADS</jndi-name>
-                                                <enabled>true</enabled>
-                                                <driver-name>h2</driver-name>
-                                            </properties>
-                                            <resources>
-                                                <resource>
-                                                    <address>
-                                                        xa-datasource-properties=URL
-                                                    </address>
-                                                    <properties>
-                                                        <value>jdbc:h2:mem:test</value>
-                                                    </properties>
-                                                </resource>
-                                            </resources>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
     
 </project>

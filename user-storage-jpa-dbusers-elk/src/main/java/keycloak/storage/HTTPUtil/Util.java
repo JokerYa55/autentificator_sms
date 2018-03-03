@@ -25,13 +25,7 @@ public class Util {
 
     private static final Logger log = Logger.getLogger(Util.class);
 
-    /**
-     *
-     * @param url
-     * @param headerList
-     * @return
-     */
-    public static /*JSONObject*/ String doGet(String url, Map<String, String> headerList) //throws ParseException
+     public static /*JSONObject*/ String doGet(String url, Map<String, String> headerList) //throws ParseException
     {
         System.out.println("doGet => " + url + "\n\n");
         //JSONObject res = new JSONObject();
