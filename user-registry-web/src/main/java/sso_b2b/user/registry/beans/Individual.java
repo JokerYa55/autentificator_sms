@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -37,8 +38,8 @@ public class Individual implements Serializable {
     private String inn_num;
     @Column(name = "pfr_num", length = 20, nullable = true)
     private String pfr_num;
-    @Column(name = "sso_id", length = 20, nullable = true)
-    private Long sso_id;
+    @Column(name = "sso_user_id", nullable = true)
+    private Long sso_user_id;
     
     
     public Long getId() {
