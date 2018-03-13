@@ -52,30 +52,67 @@ public class SecretQuestionCredentialProvider implements CredentialProvider, Cre
         this.session = session;
     }
 
-    public CredentialModel getSecret(RealmModel realm, UserModel user) {
-        log.info("getSecret => \nrealm => " + realm + "\nuser => " + user);
-        CredentialModel secret = null;
+//    public CredentialModel getSecret(RealmModel realm, UserModel user) {
+//        log.info(String.format("getSecret \n\trealm = %s\n\tuser = %s", realm, user));
+//        CredentialModel secret = null;
+//        if (user instanceof CachedUserModel) {
+//            log.info("Cashed");
+//            CachedUserModel cached = (CachedUserModel) user;
+//            log.info("cached id => " + cached.getId() + " username => " + cached.getUsername());
+//            try {
+//                //secret = (CredentialModel) cached.getCachedWith().get(CACHE_KEY);
+//                secret = (CredentialModel) cached.getCachedWith().get(SECRET_QUESTION);
+//            } catch (Exception e) {
+//                log.info("Error => " + e.getMessage());
+//            }
+//
+//        } else {
+//            log.info("No Cashed");
+//            List<CredentialModel> creds = session.userCredentialManager().getStoredCredentialsByType(realm, user, SECRET_QUESTION);
+//            // Выбираем последнюю по времени запись
+//            if (!creds.isEmpty()) {
+//                secret = creds.get(0);
+//            }
+//        }
+//        log.info(String.format("getSecret secret = %s", secret.getValue()));
+//        return secret;
+//    }
+    /**
+     *
+     * @param realm
+     * @param user
+     * @return
+     */
+    public String getSecret(RealmModel realm, UserModel user) {
+        log.info(String.format("getSecret \n\trealm = %s\n\tuser = %s", realm, user));
+        String secret = null;
         if (user instanceof CachedUserModel) {
             log.info("Cashed");
             CachedUserModel cached = (CachedUserModel) user;
             log.info("cached id => " + cached.getId() + " username => " + cached.getUsername());
             try {
-                //secret = (CredentialModel) cached.getCachedWith().get(CACHE_KEY);
-                secret = (CredentialModel) cached.getCachedWith().get(SECRET_QUESTION);
+                secret = cached.getFirstAttribute(SECRET_QUESTION);
             } catch (Exception e) {
                 log.info("Error => " + e.getMessage());
             }
 
         } else {
             log.info("No Cashed");
-            List<CredentialModel> creds = session.userCredentialManager().getStoredCredentialsByType(realm, user, SECRET_QUESTION);
-            if (!creds.isEmpty()) {
-                secret = creds.get(0);
-            }
+            // Выбираем последнюю по времени запись
+
+            secret = user.getFirstAttribute(SECRET_QUESTION);
         }
+        log.info(String.format("getSecret secret = %s", secret));
         return secret;
     }
 
+    /**
+     *
+     * @param realm
+     * @param user
+     * @param input
+     * @return
+     */
     @Override
     public boolean updateCredential(RealmModel realm, UserModel user, CredentialInput input) {
         log.info("updateCredential => " + realm + " user => " + user + " input=> " + input);
@@ -154,8 +191,9 @@ public class SecretQuestionCredentialProvider implements CredentialProvider, Cre
             return false;
         }
 
-        String secret = getSecret(realm, user).getValue();
-
+        //String secret = getSecret(realm, user).getValue();
+        String secret = getSecret(realm, user);
+        
         log.info("\tsecret => " + secret);
 
         return secret != null && ((UserCredentialModel) input).getValue().equals(secret);
