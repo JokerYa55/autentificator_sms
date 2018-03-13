@@ -33,7 +33,7 @@ import javax.persistence.Table;
     @NamedQuery(name = "findAttributeByUserName", query = "select u from UserAttribute u where u.userId = :userId and u.name = :name"),})
 
 @Entity
-@Table(name = "t_user_attribute", indexes = {
+@Table(name = "t_user_attribute", schema = "sso_user", indexes = {
     @Index(name = "t_user_attribute_name_idx", columnList = "name"),
     @Index(name = "t_user_attribut_user_id_idx", columnList = "user_id")})
 public class UserAttribute implements Serializable {

@@ -35,7 +35,7 @@ import org.jboss.logging.Logger;
     @NamedQuery(name = "searchForUser", query = "select u from UserEntity u where "
             + "( lower(u.username) like :search or u.email like :search ) and  u.user_status=0 order by u.username"),})
 @Entity
-@Table(name = "t_users", indexes = {
+@Table(name = "t_users", schema = "sso_user", indexes = {
     @Index(name = "t_users_status_idx", columnList = "user_status")
     ,
     @Index(name = "t_users_username_idx", columnList = "username")})

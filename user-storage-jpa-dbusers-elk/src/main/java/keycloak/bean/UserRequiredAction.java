@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author vasil
  */
 @Entity
-@Table(name = "t_user_required_action")
+@Table(name = "t_user_required_action", schema = "sso_user")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "UserRequiredAction.findAll", query = "SELECT t FROM UserRequiredAction t")
