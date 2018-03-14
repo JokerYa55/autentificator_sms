@@ -11,8 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -20,6 +20,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "t_registry_individual", schema = "user_registry")
+@XmlRootElement
 public class Individual implements Serializable {
 
     private static final long serialVersionUID = 1L;
