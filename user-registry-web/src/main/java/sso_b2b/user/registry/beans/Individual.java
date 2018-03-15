@@ -22,12 +22,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "t_registry_individual", schema = "user_registry")
 @XmlRootElement
-@NamedQuery(name="Individual.findAll", query="SELECT p FROM Individual p")
+@NamedQuery(name = "Individual.findAll", query = "SELECT p FROM Individual p")
 public class Individual implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)    
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "first_name", length = 100, nullable = false)
     private String firstName;
@@ -43,8 +43,7 @@ public class Individual implements Serializable {
     private String pfr_num;
     @Column(name = "sso_user_id", nullable = true)
     private Long sso_user_id;
-    
-    
+
     public Long getId() {
         return id;
     }
@@ -75,8 +74,8 @@ public class Individual implements Serializable {
 
     @Override
     public String toString() {
-        return "sso_b2b.user.registry.beans.Individual[ id=" + id + " ]";
-    }    
+        return "Individual{" + "id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", thirdName=" + thirdName + ", pasport_num=" + pasport_num + ", inn_num=" + inn_num + ", pfr_num=" + pfr_num + ", sso_user_id=" + sso_user_id + '}';
+    }
 
     public String getLastName() {
         return lastName;
@@ -133,5 +132,5 @@ public class Individual implements Serializable {
     public void setSso_user_id(Long sso_user_id) {
         this.sso_user_id = sso_user_id;
     }
-    
+
 }

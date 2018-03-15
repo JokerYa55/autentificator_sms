@@ -104,6 +104,24 @@ public class restApi {
         }
     }
 
+    @Path("/realms/{realm}/individual/{id}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getIndividual(@PathParam("realm") String p_realm, @PathParam("id") Long id) {
+        try {
+            log.info(String.format("getIndividual \n\trealm = %s\n\tid=%s", p_realm, id));
+            Individual result = null;
+            getEM();
+            em.getTransaction().begin();
+            result = em.find(Individual.class, id);
+            em.getTransaction().commit();
+            em.close();
+            return Response.status(Response.Status.OK).entity(result).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        }
+    }
+
     /**
      * Добавить
      *
@@ -137,8 +155,19 @@ public class restApi {
     @Path("/realms/{realm}/individual/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @PUT
-    public Response updIndividual(@PathParam("realm") String p_realm, @PathParam("id") Long userID) {
+    public Response updIndividual(@PathParam("realm") String p_realm, @PathParam("id") Long userID, Individual user) {
         try {
+            log.info(String.format("updIndividual \n\trealm = %s \n\tuserID = %s", p_realm, userID));
+            em.getTransaction().begin();
+            Individual item = em.find(Individual.class, userID);
+            if (item != null) {
+                user.setId(userID);
+                em.merge(user);
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity(String.format("Запись c id = %s не найдена.", userID)).build();
+            }
+            em.getTransaction().commit();
+            em.close();
             return Response.status(Response.Status.OK).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
