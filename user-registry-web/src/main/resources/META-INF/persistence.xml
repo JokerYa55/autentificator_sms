@@ -3,7 +3,8 @@
   <persistence-unit name="user-registry-web_JPA" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <jta-data-source>java:/DBUsers3</jta-data-source>
-    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <class>sso_b2b.user.registry.beans.Individual</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="hibernate.format_sql" value="true"/>
       <property name="hibernate.show_sql" value="true"/>

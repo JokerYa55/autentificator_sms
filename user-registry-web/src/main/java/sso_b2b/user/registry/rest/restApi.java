@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceUnit;
+import javax.persistence.TypedQuery;
 import javax.transaction.UserTransaction;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -89,19 +90,22 @@ public class restApi {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getIndividualList(@PathParam("realm") String p_realm) {
         try {
-            throw new Exception(p_realm);
-            /*log.info(String.format("getIndividualList = %s", em));
-            Individual item = new Individual();
-            item.setFirdtName(p_realm);
+            log.info(String.format("getIndividualList \n\trealm = %s", p_realm));
             List<Individual> result = new LinkedList();
-            result.add(item);
-            return Response.status(Response.Status.OK).entity(result).build();*/
+            getEM();
+            em.getTransaction().begin();
+            TypedQuery<Individual> query = em.createNamedQuery("Individual.findAll", Individual.class);
+            result = query.getResultList();
+            em.getTransaction().commit();
+            em.close();
+            return Response.status(Response.Status.OK).entity(result).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         }
     }
 
     /**
+     * Добавить
      *
      * @param p_realm
      * @param user
@@ -112,12 +116,24 @@ public class restApi {
     @POST
     public Response addIndividual(@PathParam("realm") String p_realm, Individual user) {
         try {
+            log.info(String.format("addIndividual \n\trealm = %s \n\tuser = %s", p_realm, user));
+            em.getTransaction().begin();
+            em.merge(user);
+            em.getTransaction().commit();
+            em.close();
             return Response.status(Response.Status.OK).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();
         }
     }
 
+    /**
+     * Обновить
+     *
+     * @param p_realm
+     * @param userID
+     * @return
+     */
     @Path("/realms/{realm}/individual/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @PUT
@@ -129,11 +145,28 @@ public class restApi {
         }
     }
 
+    /**
+     * Удалить
+     *
+     * @param p_realm
+     * @param userID
+     * @return
+     */
     @Path("/realms/{realm}/individual/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @DELETE
     public Response delIndividual(@PathParam("realm") String p_realm, @PathParam("id") Long userID) {
         try {
+            log.info(String.format("delIndividual \n\trealm = %s \n\tuserID = %s", p_realm, userID));
+            em.getTransaction().begin();
+            Individual item = em.find(Individual.class, userID);
+            if (item != null) {
+                em.detach(item);
+            } else {
+                return Response.status(Response.Status.NOT_FOUND).entity(String.format("Запись c id = %s не найдена.", userID)).build();
+            }
+            em.getTransaction().commit();
+            em.close();
             return Response.status(Response.Status.OK).build();
         } catch (Exception e) {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e).build();

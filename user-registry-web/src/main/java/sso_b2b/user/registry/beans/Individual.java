@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -21,6 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "t_registry_individual", schema = "user_registry")
 @XmlRootElement
+@NamedQuery(name="Individual.findAll", query="SELECT p FROM Individual p")
 public class Individual implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -28,7 +30,7 @@ public class Individual implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)    
     private Long id;
     @Column(name = "first_name", length = 100, nullable = false)
-    private String firdtName;
+    private String firstName;
     @Column(name = "last_name", length = 100, nullable = false)
     private String lastName;
     @Column(name = "third_name", length = 100, nullable = false)
@@ -74,15 +76,7 @@ public class Individual implements Serializable {
     @Override
     public String toString() {
         return "sso_b2b.user.registry.beans.Individual[ id=" + id + " ]";
-    }
-
-    public String getFirdtName() {
-        return firdtName;
-    }
-
-    public void setFirdtName(String firdtName) {
-        this.firdtName = firdtName;
-    }
+    }    
 
     public String getLastName() {
         return lastName;
@@ -122,6 +116,22 @@ public class Individual implements Serializable {
 
     public void setPfr_num(String pfr_num) {
         this.pfr_num = pfr_num;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public Long getSso_user_id() {
+        return sso_user_id;
+    }
+
+    public void setSso_user_id(Long sso_user_id) {
+        this.sso_user_id = sso_user_id;
     }
     
 }
