@@ -3,6 +3,35 @@
     <head>
         <title>Start Page</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="/auth/js/keycloak.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script>
+            var keycloak = Keycloak();
+            var url;
+            keycloak.init({onLoad: 'login-required'}).success(function (authenticated) {
+
+                //console.log(keycloak.token);
+
+                keycloak.loadUserProfile().success(function (profile) {
+                    //console.log(profile);
+                    console.log("token => ");
+                    console.log(keycloak);
+                    url = keycloak.authServerUrl;
+
+                    $(document).ready(function () {
+                        getProjectDocList(keycloak.token, 8, 'idData');
+                    });
+
+
+                }).error(function () {
+                    alert('Failed to load user profile');
+                });
+
+            }).error(function () {
+                alert('failed to initialize');
+            });
+        </script>
     </head>
     <body>
         <h1>Hello World!</h1>

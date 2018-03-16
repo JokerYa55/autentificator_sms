@@ -10,10 +10,22 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Личный кабинет</title>       
+        <link href="css/main.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
-        <h1>Hello World!</h1>
-        ${list}
+        <div class="header">
+            HEADER
+        </div>
+        <div class="main">
+            <div class="left_panel">
+                <c:forEach items="${list}" var="item">
+                    ${item.id}
+                </c:forEach>
+            </div>
+
+        </div>
+
+        <div id="footer">низ сайта</div>
     </body>
 </html>
