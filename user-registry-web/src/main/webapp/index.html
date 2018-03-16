@@ -6,9 +6,13 @@
         <script src="/auth/js/keycloak.js"></script>
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <link href="css/main.css" rel="stylesheet" type="text/css"/>
+        <script src="js/api.js" type="text/javascript"></script>
         <script>
             var keycloak = Keycloak();
             var url;
+            var userProfile;
+            var userId;
             keycloak.init({onLoad: 'login-required'}).success(function (authenticated) {
 
                 //console.log(keycloak.token);
@@ -17,13 +21,38 @@
                     //console.log(profile);
                     console.log("token => ");
                     console.log(keycloak);
-                    url = keycloak.authServerUrl;
-
+                    userProfile = profile;
+                    userId = profile.id.split(":")[2];
+                    console.log("userId = " + userId);
+                    updUserInfoPanel(userProfile, 'infoPanel');
                     $(document).ready(function () {
-                        getProjectDocList(keycloak.token, 8, 'idData');
+
+                        $("#individualLink").click(function () {
+                            getIndividualInfo(keycloak.token, userId, 'idData');
+                        });
+
+
+                        /*keycloak.loadUserProfile().success(function (profile) {
+                         var params = getParams();
+                         console.log(params);
+                         updUserInfoPanel(profile, 'infoPanel');
+                         switch (params["page"])
+                         {
+                         case '1':  // if (x === 'value1')                                
+                         //getIndividualList(keycloak.token, 'idData');  
+                         var id = profile.id.split(":")[2];
+                         console.log("id = " + id);
+                         getIndividualInfo(keycloak.token, id, 'idData');
+                         break;
+                         case '2':  // if (x === 'value2')
+                         break;
+                         default:
+                         break;
+                         }
+                         }).error(function () {
+                         console.log('Failed to load user profile');
+                         });*/
                     });
-
-
                 }).error(function () {
                     alert('Failed to load user profile');
                 });
@@ -34,6 +63,19 @@
         </script>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <div class="header">
+            <div id="infoPanel"></div>
+        </div>
+        <div class="main">
+            <div class="left_panel">  
+                <ul>
+                    <li><a href="#" id="individualLink">Физическое лицо</a></li>
+                    <li><a href="?page=2">Юридическое лицо</a></li>                    
+                </ul>
+            </div>
+            <div class="right_panel">
+                <div id="idData"></div>
+            </div>
+        </div>        
     </body>
 </html>

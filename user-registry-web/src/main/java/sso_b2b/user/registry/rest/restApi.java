@@ -113,7 +113,10 @@ public class restApi {
             Individual result = null;
             getEM();
             em.getTransaction().begin();
-            result = em.find(Individual.class, id);
+            //result = em.find(Individual.class, id);
+            TypedQuery<Individual> query = em.createNamedQuery("Individual.findBySSOId", Individual.class);
+            query.setParameter("sso_id", id);
+            result = query.getSingleResult();
             em.getTransaction().commit();
             em.close();
             return Response.status(Response.Status.OK).entity(result).build();

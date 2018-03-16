@@ -11,6 +11,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,7 +23,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "t_registry_individual", schema = "user_registry")
 @XmlRootElement
-@NamedQuery(name = "Individual.findAll", query = "SELECT p FROM Individual p")
+@NamedQueries({
+    @NamedQuery(name = "Individual.findAll", query = "SELECT p FROM Individual p")
+    ,@NamedQuery(name = "Individual.findBySSOId", query = "SELECT p FROM Individual p WHERE p.sso_user_id = :sso_id")})
+
 public class Individual implements Serializable {
 
     private static final long serialVersionUID = 1L;

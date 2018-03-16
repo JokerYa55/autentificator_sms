@@ -11,7 +11,7 @@ and open the template in the editor.
 
 .header{    
     width:100%;
-    height:70px;
+    height:5vh;
     background-color: lavender;
 }
 
@@ -23,12 +23,21 @@ and open the template in the editor.
 
 .left_panel{
     background:yellow;
-    width:300px;
+    width:400px;
     height:90vh;
+    float: left;
+}
+
+.right_panel{
+    background-color: bisque;
+    
+    height:90vh;
+    float: right;
 }
 
 #footer{
     background:darkred;
     width:100%;
-    height:70px;
+    height:5vh;
+    float: bottom;
 }
