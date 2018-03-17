@@ -52,7 +52,7 @@ function getIndividualList(token, elem) {
 }
 
 // Получить информацию о физ. лице
-function getIndividualInfo(token, userId, elem) {
+function getIndividualInfo(token, userId, elem, addForm) {
     console.log("getIndividualInfo");
     $.ajax({
         headers: {
@@ -61,23 +61,32 @@ function getIndividualInfo(token, userId, elem) {
         url: "http://192.168.0.20:8080/user-registry-web/api/realms/videomanager/individual/" + userId,
         success: function (data, textStatus, jqXHR) {
             console.log(jqXHR);
-            console.log(data);          
-            var userInfoDiv = $("<div>");            
+            console.log(data);
+            var userInfoDiv = $("<div>");
             // Добавляем first_name
             var firstname = $("<p>");
             firstname.html(data.firstName);
             var lastname = $("<p>");
             lastname.html(data.lastName);
             var inn_num = $("<p>");
-            inn_num.html(data.inn_num);                        
+            inn_num.html(data.inn_num);
             var pasport_num = $("<p>");
-            pasport_num.html(data.pasport_num);            
-                        
+            pasport_num.html(data.pasport_num);
+
+            var editBtn = $("<button>");
+            editBtn.append("Редактировать");
+            editBtn.click(function () {
+                console.log(data);
+                addForm.dialog( "open" );
+            });
+
             userInfoDiv.append(firstname);
-            userInfoDiv.append(lastname);            
+            userInfoDiv.append(lastname);
             userInfoDiv.append(inn_num);
             userInfoDiv.append(pasport_num);
-            
+            userInfoDiv.append(editBtn);
+
+            $('#' + elem).empty();
             $('#' + elem).append(userInfoDiv);
         },
         error: function (jqXHR, textStatus, errorThrown) {
@@ -87,7 +96,11 @@ function getIndividualInfo(token, userId, elem) {
 }
 
 
-
+function addUser() {
+    console.log("addUser");
+    console.log(this);
+    this.dialog( "close" );
+}
 
 
 /*
