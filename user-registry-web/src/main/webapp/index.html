@@ -6,6 +6,7 @@
         <script src="/auth/js/keycloak.js"></script>
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
         <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link href="css/main.css" rel="stylesheet" type="text/css"/>
         <script src="js/api.js" type="text/javascript"></script>
         <script>
@@ -13,9 +14,18 @@
             var url;
             var userProfile;
             var userId;
+            var dialog; 
+            var form;
+            var emailRegex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+            var name = $("#name");
+            var email = $("#email");
+            var password = $("#password");
+            var token;
+            //var allFields = $([]).add(name).add(email).add(password);
+            var tips = $(".validateTips");
             keycloak.init({onLoad: 'login-required'}).success(function (authenticated) {
 
-                //console.log(keycloak.token);
+                token = keycloak.token;
 
                 keycloak.loadUserProfile().success(function (profile) {
                     //console.log(profile);
@@ -27,32 +37,33 @@
                     updUserInfoPanel(userProfile, 'infoPanel');
                     $(document).ready(function () {
 
-                        $("#individualLink").click(function () {
-                            getIndividualInfo(keycloak.token, userId, 'idData');
+                        dialog = $("#dialog-form").dialog({
+                            autoOpen: false,
+                            height: 400,
+                            width: 350,
+                            modal: true,
+                            buttons: {
+                                "Ok": addUser,
+                                Cancel: function () {
+                                    dialog.dialog("close");
+                                }
+                            },
+                            close: function () {
+                                form[0].reset();
+                                //allFields.removeClass("ui-state-error");
+                            }
                         });
 
+                        form = dialog.find("form").on("submit", function (event) {
+                            event.preventDefault();
+                            addUser();
+                        });
 
-                        /*keycloak.loadUserProfile().success(function (profile) {
-                         var params = getParams();
-                         console.log(params);
-                         updUserInfoPanel(profile, 'infoPanel');
-                         switch (params["page"])
-                         {
-                         case '1':  // if (x === 'value1')                                
-                         //getIndividualList(keycloak.token, 'idData');  
-                         var id = profile.id.split(":")[2];
-                         console.log("id = " + id);
-                         getIndividualInfo(keycloak.token, id, 'idData');
-                         break;
-                         case '2':  // if (x === 'value2')
-                         break;
-                         default:
-                         break;
-                         }
-                         }).error(function () {
-                         console.log('Failed to load user profile');
-                         });*/
+                        $("#individualLink").click(function () {
+                            getIndividualInfo(keycloak.token, userId, 'idData', dialog);
+                        });
                     });
+
                 }).error(function () {
                     alert('Failed to load user profile');
                 });
@@ -70,12 +81,30 @@
             <div class="left_panel">  
                 <ul>
                     <li><a href="#" id="individualLink">Физическое лицо</a></li>
-                    <li><a href="?page=2">Юридическое лицо</a></li>                    
+                    <li><a href="#" id="entityLink">Юридическое лицо</a></li>                    
                 </ul>
             </div>
             <div class="right_panel">
                 <div id="idData"></div>
             </div>
-        </div>        
+        </div>    
+
+        <div id="dialog-form" title="Create new user">
+            <p class="validateTips">All form fields are required.</p>
+
+            <form>
+                <fieldset>
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" value="Jane Smith" class="text ui-widget-content ui-corner-all">
+                    <label for="email">Email</label>
+                    <input type="text" name="email" id="email" value="jane@smith.com" class="text ui-widget-content ui-corner-all">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" value="xxxxxxx" class="text ui-widget-content ui-corner-all">
+
+                    <!-- Allow form submission with keyboard without duplicating the dialog button -->
+                    <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+                </fieldset>
+            </form>
+        </div>
     </body>
 </html>

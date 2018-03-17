@@ -77,7 +77,7 @@ function getIndividualInfo(token, userId, elem, addForm) {
             editBtn.append("Редактировать");
             editBtn.click(function () {
                 console.log(data);
-                addForm.dialog( "open" );
+                addForm.dialog("open");
             });
 
             userInfoDiv.append(firstname);
@@ -97,9 +97,25 @@ function getIndividualInfo(token, userId, elem, addForm) {
 
 
 function addUser() {
-    console.log("addUser");
+    console.log("addUser " + userId);
     console.log(this);
-    this.dialog( "close" );
+
+    $.ajax({
+        headers: {
+            'Authorization': 'Bearer ' + token
+        },
+        url: "http://192.168.0.20:8080/user-registry-web/api/realms/videomanager/individual/" + userId,
+        success: function (data, textStatus, jqXHR) {
+            console.log(jqXHR);
+            console.log(data);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            dialog.dialog("close");
+            return '';
+        }
+    });
+
+
 }
 
 
