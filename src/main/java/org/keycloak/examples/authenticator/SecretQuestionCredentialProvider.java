@@ -88,9 +88,12 @@ public class SecretQuestionCredentialProvider implements CredentialProvider, Cre
         String secret = null;
         if (user instanceof CachedUserModel) {
             CachedUserModel cached = (CachedUserModel) user;
-            log.info(String.format("Cashed \n\t id = %s \n\tusername = %s", cached.getId(), cached.getUsername()));                        
+            log.info(String.format("Cashed \n\t id = %s \n\tusername = %s", cached.getId(), cached.getUsername()));
             try {
-                secret = cached.getFirstAttribute(SECRET_QUESTION);
+                //secret = cached.getFirstAttribute(SECRET_QUESTION);
+
+                
+                secret = (String) ((CachedUserModel) user).getCachedWith().get(SECRET_QUESTION);
             } catch (Exception e) {
                 log.info("Error => " + e.getMessage());
             }
@@ -192,7 +195,7 @@ public class SecretQuestionCredentialProvider implements CredentialProvider, Cre
 
         //String secret = getSecret(realm, user).getValue();
         String secret = getSecret(realm, user);
-        
+
         log.info("\tsecret => " + secret);
 
         return secret != null && ((UserCredentialModel) input).getValue().equals(secret);

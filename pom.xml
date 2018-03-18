@@ -27,43 +27,48 @@
     <groupId>org.keycloak</groupId>
     <version>1</version>
     <packaging>jar</packaging>
+    
+    <properties>
+        <version.keycloak>3.1.0.Final</version.keycloak>
+    </properties>    
+        
         
     <dependencies>
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-core</artifactId>
             <scope>provided</scope>
-            <version>3.4.2.Final</version>
+            <version>${version.keycloak}</version>
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-server-spi</artifactId>
             <scope>provided</scope>
-            <version>3.4.2.Final</version>
+            <version>${version.keycloak}</version>
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-server-spi-private</artifactId>
             <scope>provided</scope>
-            <version>3.4.2.Final</version>
+            <version>${version.keycloak}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
             <scope>provided</scope>
-            <version>3.3.1.Final</version>
+            <version>3.3.2.Final</version>
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-services</artifactId>
             <scope>provided</scope>
-            <version>3.4.2.Final</version>
+            <version>${version.keycloak}</version>
         </dependency>
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-common</artifactId>
             <scope>provided</scope>
-            <version>3.4.2.Final</version>
+            <version>${version.keycloak}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
